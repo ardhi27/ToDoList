@@ -13,13 +13,17 @@ struct ContentView: View {
     @State var lowPriority: [String] = []
     @State private var showModal = false
     
+    @State var highPriorityMenu = false
+    @State var lowPriorityMenu = false
+    @State var medPriorityMenu = false
+    
     var body: some View {
         VStack{
             VStack(alignment: .leading){
             Text("To-Do List").font(.system(size: 20, weight: .bold)).italic()
             HStack(){
                 GroupBox(label: Text("High Priority").foregroundColor(Color.red)){
-                    ScrollView(.vertical, showsIndicators: true){
+                    ScrollView(.vertical,showsIndicators: true){
                         VStack(alignment: .leading, spacing: 5){
                             ForEach(highPriority, id: \.self){
                                 task in
@@ -27,7 +31,12 @@ struct ContentView: View {
                             }
                         }
                     }
-                }.backgroundStyle(Color.black)
+                }.backgroundStyle(Color.black).onTapGesture {
+                    highPriorityMenu = true
+                }
+                .sheet(isPresented: $highPriorityMenu){
+                    highPriorityListMenu(highPriority: $highPriority)
+                }
                 GroupBox(label: Text("Medium Priority").foregroundColor(Color.yellow)){
                     ScrollView(.vertical, showsIndicators: true){
                         VStack(alignment: .leading, spacing: 5){
@@ -37,7 +46,12 @@ struct ContentView: View {
                             }
                         }
                     }
-                }.backgroundStyle(Color.black)
+                }.backgroundStyle(Color.black).onTapGesture {
+                    medPriorityMenu = true
+                }
+                .sheet(isPresented: $medPriorityMenu){
+                    medPriorityListMenu(medPriority: $mediumPriority)
+                }
             }
             HStack(){
                 GroupBox(label: Text("Low Priority").foregroundColor(Color.green)){
@@ -49,7 +63,12 @@ struct ContentView: View {
                             }
                         }
                     }
-                }.backgroundStyle(Color.black)
+                }.backgroundStyle(Color.black).onTapGesture{
+                    lowPriorityMenu = true
+                }
+                .sheet(isPresented: $lowPriorityMenu){
+                    lowPriorityListMenu(lowPriority: $lowPriority)
+                }
             }
             }.padding(10)
             VStack(alignment: .trailing){
@@ -58,8 +77,8 @@ struct ContentView: View {
             
                 }
                 .sheet(isPresented: $showModal){
-                    ModalView{listName, selectedPriority in
-                        addTask(listName: listName, priority: selectedPriority)
+                    ModalView{listName, selectedPriority
+                        in addTask(listName: listName, priority: selectedPriority)
                     }
                 }
             }
@@ -78,7 +97,83 @@ struct ContentView: View {
             break
         }
     }
+
 }
+
+struct highPriorityListMenu: View {
+    @Environment(\.dismiss) var dismiss
+    @Binding var highPriority: [String]
+    var body: some View{
+        VStack(){
+            List{
+                ForEach(highPriority, id: \.self){
+                    task in
+                    Text(task)
+                    Button(action:{
+                        deleteTask(task: task, from: &highPriority)
+                    }){
+                        Text("Delete Task").foregroundColor(Color.red)
+                    }
+                   
+                }
+            }
+            Spacer()
+            Button("Close Menu"){
+                dismiss()
+                
+            }
+        }
+    }
+}
+
+struct medPriorityListMenu: View {
+    @Environment(\.dismiss) var dismiss
+    @Binding var medPriority: [String]
+    var body: some View{
+        VStack(){
+            List{
+                ForEach(medPriority, id:\.self){
+                    task in
+                    Text(task)
+                    Button(action:{
+                        deleteTask(task: task, from: &medPriority)
+                    }){
+                        Text("Delete Task").foregroundColor(Color.red)
+                    }
+                }
+            }
+            Spacer()
+            Button("Close Menu"){
+                dismiss()
+            }
+        }
+    }
+}
+
+struct lowPriorityListMenu : View {
+    @Environment(\.dismiss) var dismiss
+    @Binding var lowPriority : [String]
+    var body: some View{
+        VStack(){
+            List{
+                ForEach(lowPriority, id:\.self){
+                    task in
+                    Text(task)
+                    Button(action:{
+                        deleteTask(task: task, from: &lowPriority)
+                    }){
+                        Text("Delete Task").foregroundColor(Color.red)
+                    }
+                }
+            }
+            Spacer()
+            Button("Close Menu"){
+                dismiss()
+            }
+        }
+    }
+}
+
 
 struct ModalView: View{
     @Environment(\.dismiss) var dismiss
@@ -115,3 +210,17 @@ struct ContentView_Previews: PreviewProvider {
         ContentView()
     }
 }
+
+
+
+func deleteTask(task: String, from list: inout [String]){
+    if let index = list.firstIndex(of: task){
+        list.remove(at: index)
+    }
+}
+
+//func createTask
+
+
+//func editTask
+
