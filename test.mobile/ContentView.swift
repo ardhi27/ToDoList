@@ -20,82 +20,96 @@ struct ContentView: View {
     var body: some View {
         VStack{
             VStack(alignment: .leading){
-            Text("To-Do List").font(.system(size: 20, weight: .bold)).italic()
-            HStack(){
-                GroupBox(label: Text("High Priority").foregroundColor(Color.red)){
-                    ScrollView(.vertical,showsIndicators: true){
-                        VStack(alignment: .leading, spacing: 5){
-                            ForEach(highPriority, id: \.self){
-                                task in
-                                Text(task).foregroundColor(Color.white)
+                Text("To-Do List").font(.system(size: 20, weight: .bold)).italic()
+                HStack(){
+                    GroupBox(label: Text("High Priority").foregroundColor(Color.red)){
+                        ScrollView(.vertical,showsIndicators: true){
+                            VStack(alignment: .leading, spacing: 5){
+                                ForEach(highPriority, id: \.self){
+                                    task in
+                                    Text(task).foregroundColor(Color.white)
+                                }
                             }
                         }
+                    }.backgroundStyle(Color.black).onTapGesture {
+                        highPriorityMenu = true
                     }
-                }.backgroundStyle(Color.black).onTapGesture {
-                    highPriorityMenu = true
-                }
-                .sheet(isPresented: $highPriorityMenu){
-                    highPriorityListMenu(highPriority: $highPriority)
-                }
-                GroupBox(label: Text("Medium Priority").foregroundColor(Color.yellow)){
-                    ScrollView(.vertical, showsIndicators: true){
-                        VStack(alignment: .leading, spacing: 5){
-                            ForEach(mediumPriority, id: \.self){
-                                task in
-                                Text(task).foregroundColor(Color.white)
+                    .sheet(isPresented: $highPriorityMenu){
+                        highPriorityListMenu(highPriority: $highPriority)
+                    }
+                    GroupBox(label: Text("Medium Priority").foregroundColor(Color.yellow)){
+                        ScrollView(.vertical, showsIndicators: true){
+                            VStack(alignment: .leading, spacing: 5){
+                                ForEach(mediumPriority, id: \.self){
+                                    task in
+                                    Text(task).foregroundColor(Color.white)
+                                }
                             }
                         }
+                    }.backgroundStyle(Color.black).onTapGesture {
+                        medPriorityMenu = true
                     }
-                }.backgroundStyle(Color.black).onTapGesture {
-                    medPriorityMenu = true
+                    .sheet(isPresented: $medPriorityMenu){
+                        medPriorityListMenu(medPriority: $mediumPriority)
+                    }
                 }
-                .sheet(isPresented: $medPriorityMenu){
-                    medPriorityListMenu(medPriority: $mediumPriority)
-                }
-            }
-            HStack(){
-                GroupBox(label: Text("Low Priority").foregroundColor(Color.green)){
-                    ScrollView(.vertical, showsIndicators: true){
-                        VStack(alignment: .leading, spacing: 10){
-                            ForEach(lowPriority, id:\.self){
-                                task in
-                                Text(task).foregroundColor(Color.white)
+                HStack(){
+                    GroupBox(label: Text("Low Priority").foregroundColor(Color.green)){
+                        ScrollView(.vertical, showsIndicators: true){
+                            VStack(alignment: .leading, spacing: 10){
+                                ForEach(lowPriority, id:\.self){
+                                    task in
+                                    Text(task).foregroundColor(Color.white)
+                                }
                             }
                         }
+                    }.backgroundStyle(Color.black).onTapGesture{
+                        lowPriorityMenu = true
                     }
-                }.backgroundStyle(Color.black).onTapGesture{
-                    lowPriorityMenu = true
+                    .sheet(isPresented: $lowPriorityMenu){
+                        lowPriorityListMenu(lowPriority: $lowPriority)
+                    }
                 }
-                .sheet(isPresented: $lowPriorityMenu){
-                    lowPriorityListMenu(lowPriority: $lowPriority)
-                }
-            }
             }.padding(10)
             VStack(alignment: .trailing){
                 Button("Add List"){
                     showModal.toggle()
-            
+                    
                 }
                 .sheet(isPresented: $showModal){
                     ModalView{listName, selectedPriority
-                        in addTask(listName: listName, priority: selectedPriority)
+                        in addTaskAndSave(listName: listName, priority: selectedPriority)
                     }
                 }
             }
         }
+        .onAppear{
+            loadData()
+        }
     }
     
-    private func addTask(listName: String, priority: String){
+    //Function to Add Task And Save Task
+    private func addTaskAndSave(listName: String, priority: String){
         switch priority {
         case "High Priority" :
             highPriority.append(listName)
+            UserDefaults.standard.set(highPriority, forKey:"highPriority")
         case "Medium Priority" :
             mediumPriority.append(listName)
+            UserDefaults.standard.set(mediumPriority, forKey:"mediumPriority")
         case "Low Priority" :
             lowPriority.append(listName)
+            UserDefaults.standard.set(lowPriority, forKey:"lowPriority")
         default:
             break
         }
+    }
+    
+    //Function to Load Data
+    private func loadData(){
+        highPriority = UserDefaults.standard.stringArray(forKey: "highPriority") ?? []
+        mediumPriority = UserDefaults.standard.stringArray(forKey: "mediumPriority") ?? []
+        lowPriority = UserDefaults.standard.stringArray(forKey: "lowPriority") ?? []
     }
 
 }
@@ -213,14 +227,13 @@ struct ContentView_Previews: PreviewProvider {
 
 
 
+//Function To Delete Task
 func deleteTask(task: String, from list: inout [String]){
     if let index = list.firstIndex(of: task){
         list.remove(at: index)
     }
 }
 
-//func createTask
 
 
-//func editTask
 
