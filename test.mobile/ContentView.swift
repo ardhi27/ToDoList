@@ -77,8 +77,8 @@ struct ContentView: View {
                     
                 }
                 .sheet(isPresented: $showModal){
-                    ModalView{listName, selectedPriority
-                        in addTaskAndSave(listName: listName, priority: selectedPriority)
+                    ModalView {listName, selectedPriority
+                        in addTask(listName: listName, priority: selectedPriority)
                     }
                 }
             }
@@ -89,20 +89,34 @@ struct ContentView: View {
     }
     
     //Function to Add Task And Save Task
-    private func addTaskAndSave(listName: String, priority: String){
+    private func addTask(listName: String, priority: String){
         switch priority {
         case "High Priority" :
             highPriority.append(listName)
-            UserDefaults.standard.set(highPriority, forKey:"highPriority")
+            saveTask(listName: listName, priority: "High Priority")
         case "Medium Priority" :
             mediumPriority.append(listName)
-            UserDefaults.standard.set(mediumPriority, forKey:"mediumPriority")
+            saveTask(listName: listName, priority: "Medium Priority")
         case "Low Priority" :
             lowPriority.append(listName)
+            saveTask(listName: listName, priority: "Low Priority")
+        default:
+            break
+        }
+    }
+    
+    private func saveTask(listName: String, priority: String){
+        switch priority{
+        case "High Priority" :
+            UserDefaults.standard.set(highPriority, forKey:"highPriority")
+        case "Medium Priority" :
+            UserDefaults.standard.set(mediumPriority, forKey:"mediumPriority")
+        case "Low Priority" :
             UserDefaults.standard.set(lowPriority, forKey:"lowPriority")
         default:
             break
         }
+        
     }
     
     //Function to Load Data
@@ -124,7 +138,7 @@ struct highPriorityListMenu: View {
                     task in
                     Text(task)
                     Button(action:{
-                        deleteTask(task: task, from: &highPriority)
+                        deleteTask(task: task, from: &highPriority, priority: "High Priority")
                     }){
                         Text("Delete Task").foregroundColor(Color.red)
                     }
@@ -150,7 +164,7 @@ struct medPriorityListMenu: View {
                     task in
                     Text(task)
                     Button(action:{
-                        deleteTask(task: task, from: &medPriority)
+                        deleteTask(task: task, from: &medPriority, priority: "Medium Priority")
                     }){
                         Text("Delete Task").foregroundColor(Color.red)
                     }
@@ -174,7 +188,7 @@ struct lowPriorityListMenu : View {
                     task in
                     Text(task)
                     Button(action:{
-                        deleteTask(task: task, from: &lowPriority)
+                        deleteTask(task: task, from: &lowPriority, priority: "Low Priority")
                     }){
                         Text("Delete Task").foregroundColor(Color.red)
                     }
@@ -228,9 +242,20 @@ struct ContentView_Previews: PreviewProvider {
 
 
 //Function To Delete Task
-func deleteTask(task: String, from list: inout [String]){
+func deleteTask(task: String, from list: inout [String], priority: String){
     if let index = list.firstIndex(of: task){
         list.remove(at: index)
+        
+        switch priority{
+        case "High Priority":
+            UserDefaults.standard.set(list, forKey: "highPriority")
+        case "Medium Priority":
+            UserDefaults.standard.set(list, forKey: "mediumPriority")
+        case "Low Priority":
+            UserDefaults.standard.set(list, forKey: "lowPriority")
+        default:
+            break
+        }
     }
 }
 
