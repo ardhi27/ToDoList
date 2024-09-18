@@ -77,7 +77,7 @@ struct ContentView: View {
                     
                 }
                 .sheet(isPresented: $showModal){
-                    ModalView {listName, selectedPriority
+                    AddModalView {listName, selectedPriority
                         in addTask(listName: listName, priority: selectedPriority)
                     }
                 }
@@ -142,6 +142,11 @@ struct highPriorityListMenu: View {
                     }){
                         Text("Delete Task").foregroundColor(Color.red)
                     }
+                    Button(action:{
+                        updateTask()
+                    }){
+                        Text("Update Task").foregroundColor(Color.green)
+                    }
                    
                 }
             }
@@ -168,6 +173,11 @@ struct medPriorityListMenu: View {
                     }){
                         Text("Delete Task").foregroundColor(Color.red)
                     }
+                    Button(action:{
+                        updateTask()
+                    }){
+                        Text("Update Task").foregroundColor(Color.green)
+                    }
                 }
             }
             Spacer()
@@ -192,6 +202,11 @@ struct lowPriorityListMenu : View {
                     }){
                         Text("Delete Task").foregroundColor(Color.red)
                     }
+                    Button(action:{
+                        updateTask()
+                    }){
+                        Text("Update Task").foregroundColor(Color.green)
+                    }
                 }
             }
             Spacer()
@@ -203,7 +218,7 @@ struct lowPriorityListMenu : View {
 }
 
 
-struct ModalView: View{
+struct AddModalView: View{
     @Environment(\.dismiss) var dismiss
     @State private var listName: String = ""
     @State private var selectedPriority: String = "High Priority"
@@ -260,5 +275,8 @@ func deleteTask(task: String, from list: inout [String], priority: String){
 }
 
 
-
+//Function to Update Task
+func updateTask(){
+    print("Calling Function to Update Task")
+}
 
