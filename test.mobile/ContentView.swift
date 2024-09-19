@@ -143,7 +143,7 @@ struct highPriorityListMenu: View {
                         Text("Delete Task").foregroundColor(Color.red)
                     }
                     Button(action:{
-                        updateTask()
+//                        updateTask()
                     }){
                         Text("Update Task").foregroundColor(Color.green)
                     }
@@ -174,7 +174,7 @@ struct medPriorityListMenu: View {
                         Text("Delete Task").foregroundColor(Color.red)
                     }
                     Button(action:{
-                        updateTask()
+//                        updateTask()
                     }){
                         Text("Update Task").foregroundColor(Color.green)
                     }
@@ -203,7 +203,6 @@ struct lowPriorityListMenu : View {
                         Text("Delete Task").foregroundColor(Color.red)
                     }
                     Button(action:{
-                        updateTask()
                     }){
                         Text("Update Task").foregroundColor(Color.green)
                     }
@@ -276,7 +275,22 @@ func deleteTask(task: String, from list: inout [String], priority: String){
 
 
 //Function to Update Task
-func updateTask(){
-    print("Calling Function to Update Task")
-}
+//func updateTask(task: String, updatedTask: String, from list: inout[String]){
+//}
 
+func updateTask(task: String, newTask: String, from list: inout[String], priority: String){
+    if let index = list.firstIndex(of: task){
+        list[index] = newTask
+    }
+    
+    switch priority{
+    case "High Priority":
+        UserDefaults.standard.set(list, forKey: "highPriority")
+    case "Medium Priority":
+        UserDefaults.standard.set(list, forKey: "mediumPriority")
+    case "Low Priority":
+        UserDefaults.standard.set(list, forKey: "lowPriority")
+    default:
+        break
+    }
+}
