@@ -131,6 +131,7 @@ struct ContentView: View {
 struct highPriorityListMenu: View {
     @Environment(\.dismiss) var dismiss
     @Binding var highPriority: [String]
+    @State private var updateTaskModal = false
     var body: some View{
         VStack(){
             List{
@@ -143,7 +144,7 @@ struct highPriorityListMenu: View {
                         Text("Delete Task").foregroundColor(Color.red)
                     }
                     Button(action:{
-//                        updateTask()
+                        
                     }){
                         Text("Update Task").foregroundColor(Color.green)
                     }
@@ -151,7 +152,7 @@ struct highPriorityListMenu: View {
                 }
             }
             Spacer()
-            Button("Close Menu"){
+            Button("Close"){
                 dismiss()
                 
             }
@@ -216,6 +217,12 @@ struct lowPriorityListMenu : View {
     }
 }
 
+struct updateModalView: View{
+    @State private var text : String = ""
+    var body : some View{
+        TextField("Enter Text", text : $text).textFieldStyle(RoundedBorderTextFieldStyle())
+    }
+}
 
 struct AddModalView: View{
     @Environment(\.dismiss) var dismiss
@@ -274,9 +281,6 @@ func deleteTask(task: String, from list: inout [String], priority: String){
 }
 
 
-//Function to Update Task
-//func updateTask(task: String, updatedTask: String, from list: inout[String]){
-//}
 
 func updateTask(task: String, newTask: String, from list: inout[String], priority: String){
     if let index = list.firstIndex(of: task){
